@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6804e7fde6cb8a0489fff4a8ad17fd0b, type: 3}
   m_Name: MonkeyTesterSettings
   m_EditorClassIdentifier: 
+  spawnOnStartup: 1
+  startOnStartup: 1
   testTimeInSeconds: 25
-  clicksPerSeconds: 10
