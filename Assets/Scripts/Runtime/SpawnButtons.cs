@@ -10,30 +10,78 @@ public class SpawnButtons : MonoBehaviour
     [SerializeField] private GameObject buttonPrefab;
     [SerializeField] private GridLayoutGroup gridLayoutGroup;
 
+    private bool hasPlacedException = false;
+
     protected void Awake()
     {
-        bool hasPlacedException = false;
-
         for (int i = 0; i < buttonAmount; i++)
         {
             float chance = Random.Range(0f, 1f);
 
             GameObject go = Instantiate(buttonPrefab, gridLayoutGroup.transform);
+
             Button button = go.GetComponent<Button>();
-            go.name = $"Button ({i})";
+            Toggle toggle = go.GetComponent<Toggle>();
 
-            if (chance <= throwExceptionChance && !hasPlacedException || buttonAmount - 1 == i && !hasPlacedException)
+            if(button != null)
             {
-                button.onClick.AddListener(OnThrowException);
-                hasPlacedException = true;
-
-                Debug.Log($"Button {go.name} = Exception");
+                SetupButton(i, button, chance);
             }
-            else
+            else if(toggle != null)
             {
-                button.onClick.AddListener(OnButtonClicked);
+                SetupToggle(i, toggle, chance);
             }
         }
+    }
+
+    private void SetupButton(int index, Button button, float chance)
+    {
+        button.gameObject.name = $"Button ({index})";
+
+
+        if (chance <= throwExceptionChance && !hasPlacedException || buttonAmount - 1 == index && !hasPlacedException)
+        {
+            button.onClick.AddListener(OnThrowException);
+            hasPlacedException = true;
+
+            Debug.Log($"Button {button.gameObject.name} = Exception");
+        }
+        else
+        {
+            button.onClick.AddListener(OnButtonClicked);
+        }
+    }
+
+    private void SetupToggle(int index, Toggle toggle, float chance)
+    {
+        toggle.gameObject.name = $"Toggle ({index})";
+
+        if (chance <= throwExceptionChance && !hasPlacedException || buttonAmount - 1 == index && !hasPlacedException)
+        {
+            toggle.onValueChanged.AddListener((x) => { OnThrowException(); });
+            hasPlacedException = true;
+
+            Debug.Log($"Toggle {toggle.gameObject.name} = Exception");
+        }
+        else
+        {
+            toggle.onValueChanged.AddListener(OnToggleClicked);
+        }
+    }
+
+    public void OnSingleException(float single)
+    {
+        OnThrowException();
+    }
+
+    public void OnIntException(int i)
+    {
+        OnThrowException();
+    }
+
+    public void OnVector2Exception(Vector2 vector2)
+    {
+        OnThrowException();
     }
 
     protected void OnThrowException()
@@ -44,5 +92,10 @@ public class SpawnButtons : MonoBehaviour
     protected void OnButtonClicked()
     {
         Debug.Log("Button Clicked :)");
+    }
+
+    protected void OnToggleClicked(bool value)
+    {
+        Debug.Log("Toggle Clicked: " + value);
     }
 }
